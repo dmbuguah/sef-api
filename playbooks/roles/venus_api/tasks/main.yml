@@ -1,0 +1,209 @@
+---
+
+- name: Make directories
+  file: name={{ item }} owner={{ deploy_user }} group={{ deploy_group }} state=directory mode=u=rwx,g=rwx,o=rx recurse=yes
+  with_items:
+      - "{{install_dir}}"
+      - "{{log_dir}}"
+      - "{{static_dir}}"
+      - "{{media_dir}}"
+  become: yes
+  tags: ["nugget_api"]
+
+- name: Install nugget_api
+  pip: >
+    name=nugget version={{nugget_version}} virtualenv={{ venv_dir }} virtualenv_python=/usr/bin/python3.6
+  become: yes
+  become_user: "{{deploy_user}}"
+  tags: ["nugget_api"]
+
+
+- name: Change ownership of static dir
+  file: name={{static_dir}} owner=www-data group=www-data state=directory mode=u=rwx,g=rwx,o=rx recurse=yes
+  become: yes
+  tags: ["nugget_api"]
+
+
+- name: Create env file
+  template: src={{env_file}} dest={{install_dir}}/env.sh
+  become: yes
+  become_user: "{{deploy_user}}"
+  tags: ["nugget_api"]
+
+
+- name: Setup database user
+  postgresql_user: >
+      name={{nugget_api_database.user}}
+      password={{nugget_api_database.password}}
+      state=present
+      role_attr_flags=LOGIN,SUPERUSER
+      login_host={{nugget_api_database.host}}
+      port={{nugget_api_database.port}}
+      login_unix_socket={{pg_unix_socket}}
+      encrypted=yes
+  become: yes
+  become_user: postgres
+  tags: ["nugget_api"]
+
+
+- name: Setup database
+  postgresql_db: >
+      name={{nugget_api_database.name}}
+      owner=postgres
+      login_host={{nugget_api_database.host}}
+      port={{nugget_api_database.port}}
+      state=present
+      login_unix_socket={{pg_unix_socket}}
+  become: yes
+  become_user: postgres
+  tags: ["nugget_api"]
+
+
+- name: Grant database privileges to users on databases
+  postgresql_privs: >
+      db={{nugget_api_database.name}}
+      state=present
+      type=database
+      objs={{nugget_api_database.name}}
+      role={{nugget_api_database.user}}
+      privs=ALL
+      login_host={{nugget_api_database.host}}
+      port={{nugget_api_database.port}}
+      login_unix_socket={{pg_unix_socket}}
+  become: yes
+  become_user: postgres
+  tags: ["nugget_api"]
+
+
+- name: Grant table privileges to users on databases
+  postgresql_privs: >
+      db={{nugget_api_database.name}}
+      state=present
+      type=table
+      objs=ALL_IN_SCHEMA
+      role={{nugget_api_database.user}}
+      privs=ALL
+      login_host={{nugget_api_database.host}}
+      port={{nugget_api_database.port}}
+      login_unix_socket={{pg_unix_socket}}
+  become: yes
+  become_user: postgres
+  tags: ["nugget_api"]
+
+
+- name: Grant sequence privileges to users on databases
+  postgresql_privs: >
+      db={{nugget_api_database.name}}
+      state=present
+      type=sequence
+      objs=ALL_IN_SCHEMA
+      role={{nugget_api_database.user}}
+      privs=ALL
+      login_host={{nugget_api_database.host}}
+      port={{nugget_api_database.port}}
+      login_unix_socket={{pg_unix_socket}}
+  become: yes
+  become_user: postgres
+  tags: ["nugget_api"]
+
+
+- name: Grant schema privileges to users on databases
+  postgresql_privs: >
+      db={{nugget_api_database.name}}
+      state=present
+      type=schema
+      objs=public
+      role={{nugget_api_database.user}}
+      privs=ALL
+      login_host={{nugget_api_database.host}}
+      port={{nugget_api_database.port}}
+      login_unix_socket={{pg_unix_socket}}
+  become: yes
+  become_user: postgres
+  tags: ["nugget_api"]
+
+
+- name: perform django migration
+  shell: '. {{venv_dir}}/bin/activate && . {{ install_dir }}/env.sh && {{ django_manage }} migrate --noinput'
+  become: yes
+  become_user: "{{deploy_user}}"
+  tags: ["nugget_api"]
+
+
+# - name: load default data
+#   shell: '. {{venv_dir}}/bin/activate && . {{ install_dir }}/env.sh && {{ django_manage }} load_default_data'
+#   become: yes
+#   when: load_default_data
+#   become_user: "{{deploy_user}}"
+#   tags: ["nugget_api"]
+
+- name: collect static files
+  shell: '. {{venv_dir}}/bin/activate && . {{install_dir}}/env.sh && {{django_manage}} collectstatic --noinput --clear'
+  become: yes
+  become_user: "{{deploy_user}}"
+  tags: ["nugget_api"]
+
+
+- name: set nugget_api to nginx sites-available
+  template: >
+    src=nugget_api.nginx.conf
+    dest="/etc/nginx/sites-available/{{nugget_api_nginx}}"
+    owner="www-data"
+  become: yes
+  tags: ["nugget_api"]
+
+
+- name: set nginx sites-available to sites-enabled
+  file: >
+    src="/etc/nginx/sites-available/{{nugget_api_nginx}}"
+    dest="/etc/nginx/sites-enabled/{{nugget_api_nginx}}"
+    state=link
+  become: yes
+  tags: ["nugget_api"]
+
+
+- name: stop nginx
+  service: >
+    name=nginx state=stopped
+  become: yes
+  tags: ["nugget_api"]
+
+
+- name: start nginx
+  service: >
+    name=nginx state=started
+  become: yes
+  tags: ["nugget_api"]
+
+
+- name: add runfiles for supervisor
+  template: src={{ item.src }} dest={{install_dir}}/{{ item.dest }}
+  become: yes
+  become_user: "{{deploy_user}}"
+  with_items:
+      - { src: "nugget_api.run.sh", dest: "run.sh" }
+  tags: ["nugget_api"]
+
+
+- name: add supervisor server config files to supervisor conf.d
+  template: src={{ item.src }} dest={{supervisor_conf_dir}}/{{ item.dest }}
+  become: yes
+  with_items:
+      - { src: "nugget_api.supervisor.conf", dest: "{{nugget_api_supervisor}}.conf" }
+  tags: ["nugget_api"]
+
+
+- name: Reread supervisor
+  shell: supervisorctl reread && supervisorctl update && supervisorctl restart {{nugget_api_supervisor}}:*
+  become: yes
+  tags: ["nugget_api"]
+
+
+  #- name: Wait for nugget_api service to start
+  #pause: seconds=10
+  #tags: ["nugget_api", "nugget_api_core_package"]
+
+  #- name: Verify nugget_api service can be accessed from nginx
+  #uri: url=https://{{server_name}} status_code=302
+  #register: nginxpage
+  #tags: ["nugget_api", "nugget_api_core_package"]

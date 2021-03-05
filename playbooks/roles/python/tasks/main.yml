@@ -1,0 +1,42 @@
+---
+
+- name: Add python3.6 ppa
+  apt_repository: repo="ppa:jonathonf/python-3.6" state=present
+  become: yes
+  tags: ["python"]
+
+- name: Install python, python-dev, python-setuptools, python3-pip and virtualenv
+  apt: name={{ item }} state=present
+  become: yes
+  with_items:
+    - python3.6
+    - python3-dev
+    - python3-setuptools
+    - python3-pip
+    - python-dev
+    - python-virtualenv
+    - python-pip
+    - python-setuptools
+    - python-psycopg2
+    - python3-psycopg2
+  tags: ["python"]
+
+- name: update pip
+  pip: name=pip state=latest
+  args:
+    executable:"{{item}}"
+  with_items: >-
+    - pip2
+    - pip3
+  become: yes
+  tags: ["python"]
+
+- name: ensure $HOME/.pip exists
+  file: name=/home/{{deploy_user}}/.pip state=directory
+  become: yes
+  tags: ["python"]
+
+- name: add pip credentials
+  template: src=pip.conf dest=/home/{{deploy_user}}/.pip/pip.conf
+  become: yes
+  tags: ["python"]

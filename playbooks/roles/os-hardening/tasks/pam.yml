@@ -1,0 +1,24 @@
+---
+
+- name: update Pluggable authentication modules
+  command: 'pam-auth-update --package'
+  become: yes
+  changed_when: False
+  environment:
+    DEBIAN_FRONTEND: noninteractive
+
+- name: remove PAM ccreds
+  become: yes
+  apt: name='libpam-ccreds' state=absent
+
+- name: remove pam_cracklib, because it does not play nice with passwdqc
+  become: yes
+  apt: name='libpam-cracklib' state=absent
+
+- name: install the package for strong password checking
+  become: yes
+  apt: name='libpam-passwdqc' state='installed'
+
+- name: configure passwdqc
+  become: yes
+  template: src='passwdqc.j2' mode=0640 owner=root group=root dest='/usr/share/pam-configs/passwdqc'

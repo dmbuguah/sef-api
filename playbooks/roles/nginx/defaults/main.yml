@@ -1,0 +1,21 @@
+---
+
+dhparam_file: /etc/nginx/nginx_dh_params.pem
+nginx_client_body_buffer_size: '1k'
+nginx_remove_default_site: true
+nginx_client_max_body_size: '105M'
+nginx_keepalive_timeout: '5 5'
+nginx_client_header_buffer_size: "1k"
+nginx_large_client_header_buffers: "2 2k"
+nginx_client_body_timeout: "10"
+nginx_client_header_timeout: "10"
+nginx_send_timeout: "10"
+nginx_limit_conn_zone: "$binary_remote_addr zone=default:10m"
+nginx_limit_conn: "default 50"
+nginx_limit_req_zone: "$binary_remote_addr zone=one:10m rate=10000r/s"
+nginx_limit_req: "zone=one burst=50 nodelay"
+proxy_buffer_size: "8k"
+proxy_buffers: "2  8k"
+proxy_busy_buffers_size: "8k"
+nginx_port: null
+nginx_ssl_port: null

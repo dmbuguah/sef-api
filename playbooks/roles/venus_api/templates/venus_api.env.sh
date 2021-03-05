@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+export SECRET_KEY="{{hugget_api.secret_key}}"
+export DEBUG="false"
+export NUGGET_DATABASE_URL="{{database_url}}"
+export STATIC_ROOT="{{static_dir}}"
+export MEDIA_ROOT="{{media_dir}}"
+export VENV_DIR="{{venv_dir}}"
+export RAVEN_DSN="{{raven.api_dsn}}"
+export DJANGO_SETTINGS_MODULE="hugget.config.settings"
+export HTTPS_ENABLED="true"
+export NUGGET_ALLOWED_HOSTS="{{allowed_hosts}}"
+export FIREBASE_CREDENTIALS="{{firebase_credentials}}"

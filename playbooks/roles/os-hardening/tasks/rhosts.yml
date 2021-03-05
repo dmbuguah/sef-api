@@ -1,0 +1,17 @@
+---
+
+- name: Get user accounts
+  command: "awk -F: '{print $1}' /etc/passwd"
+  changed_when: False
+  always_run: True
+  become: yes
+  register: users
+
+- name: delete rhosts-files from system
+  become: yes
+  file: dest='~{{ item }}/.rhosts' state=absent
+  with_items: '{{ users.stdout_lines }}'
+
+- name: delete hosts.equiv from system
+  become: yes
+  file: dest='/etc/hosts.equiv' state=absent

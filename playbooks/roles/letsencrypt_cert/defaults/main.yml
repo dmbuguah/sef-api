@@ -1,0 +1,5 @@
+---
+certbot_location: /opt/certbot-auto
+certbot_email: "danmbugua74@gmail.com"
+certbot_prehook: "service nginx stop"
+certbot_posthook: "service nginx start"

@@ -1,0 +1,22 @@
+---
+
+- name: Make certbot-auto location
+  file: name={{certbot_location}} owner={{ansible_user}} group={{deploy_group}} state=directory mode=u=rwx,g=rwx,o=rx recurse=yes
+  become: yes
+  tags: ["letsencrypt"]
+
+- name: Download certbot-auto script
+  get_url: url={{certbot_url}} dest={{certbot_location}} owner={{ansible_user}} group={{deploy_group}} mode=u=rwx,g=rwx,o=rx
+  become: yes
+  tags: ["letsencrypt"]
+
+- name: Add cron task to renew certs
+  cron:
+    name: "{{certbot_cron_name}}"
+    minute: "{{certbot_cron_minute}}"
+    hour: "{{certbot_cron_hour}}"
+    day: "{{certbot_cron_day}}"
+    weekday: "{{certbot_cron_weekday}}"
+    job: '{{certbot_location}}/certbot-auto renew --quiet --non-interactive -m {{certbot_email}} --agree-tos --pre-hook "{{certbot_prehook}}" --post-hook "{{certbot_posthook}}">> {{certbot_cron_log}}'
+  become: yes
+  tags: ["letsencrypt"]

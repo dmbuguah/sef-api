@@ -1,0 +1,11 @@
+sendfile on;
+tcp_nopush on;
+tcp_nodelay on;
+types_hash_max_size 2048;
+server_tokens off;
+client_max_body_size {{nginx_client_max_body_size}};
+
+gzip on;
+gzip_vary on;
+gzip_disable "msie6";
+gzip_types application/javascript application/x-javascript text/css text/plain application/json text/xml application/xml application/xml+rss text/javascript font/ttf font/opentype image/svg+xml;

@@ -1,0 +1,6 @@
+---
+
+- name: Install denyhosts
+  apt: name=denyhosts state=present
+  become: yes
+  tags: ["denyhosts"]

@@ -1,0 +1,29 @@
+---
+
+- name: find directories for minimizing access
+  stat:
+    path: "{{ item }}"
+  register: minimize_access_directories
+  become: yes
+  with_items:
+    - '/usr/local/sbin'
+    - '/usr/local/bin'
+    - '/usr/sbin'
+    - '/usr/bin'
+    - '/sbin'
+    - '/bin'
+    - '{{os_env_extra_user_paths}}'
+
+- name: minimize access
+  file: path='{{item.stat.path}}' mode='go-w' recurse=yes
+  when: item.stat.isdir
+  become: yes
+  with_items: "{{ minimize_access_directories.results }}"
+
+- name: change shadow ownership to root and mode to 0600
+  become: yes
+  file: dest='/etc/shadow' owner=root group=root mode=0600
+
+- name: change su-binary to only be accessible to user and group root
+  become: yes
+  file: dest='/bin/su' owner=root group=root mode=0750

@@ -1,0 +1,133 @@
+---
+
+os_security_packages_clean: true
+os_security_packages_list: ['xinetd','inetd','ypserv','telnet-server','rsh-server']
+production_installation: true
+os_env_umask: 027
+os_auth_pw_max_age: 90
+os_auth_pw_min_age: 7
+os_auth_retries: 3
+os_env_extra_user_paths: []  # directories to minimize access by removing write from the group and others
+os_auth_root_ttys: ['console', 'tty1', 'tty2', 'tty3', 'tty4', 'tty5', 'tty6']
+os_auth_pam_passwdqc_options: 'min=disabled,disabled,16,12,8'
+sysctl_config:
+  # Disable IPv4 traffic forwarding.
+  net.ipv4.ip_forward: 0
+
+  # Disable IPv6 traffic forwarding.
+  net.ipv6.conf.all.forwarding: 0
+
+  # ignore RAs on Ipv6.
+  net.ipv6.conf.all.accept_ra: 0
+  net.ipv6.conf.default.accept_ra: 0
+
+  # Enable RFC-recommended source validation feature.
+  net.ipv4.conf.all.rp_filter: 1
+  net.ipv4.conf.default.rp_filter: 1
+
+  # Reduce the surface on SMURF attacks.
+  # Make sure to ignore ECHO broadcasts, which are only required in broad network analysis.
+  net.ipv4.icmp_echo_ignore_broadcasts: 1
+
+  # There is no reason to accept bogus error responses from ICMP, so ignore them instead.
+  net.ipv4.icmp_ignore_bogus_error_responses: 1
+
+  # Limit the amount of traffic the system uses for ICMP.
+  net.ipv4.icmp_ratelimit: 100
+
+  # Adjust the ICMP ratelimit to include ping, dst unreachable,
+  # source quench, ime exceed, param problem, timestamp reply, information reply
+  net.ipv4.icmp_ratemask: 88089
+
+  # Disable IPv6
+  net.ipv6.conf.all.disable_ipv6: 1
+
+  # Protect against wrapping sequence numbers at gigabit speeds
+  net.ipv4.tcp_timestamps: 0
+
+  # Define restriction level for announcing the local source IP
+  net.ipv4.conf.all.arp_ignore: 1
+
+  # Define mode for sending replies in response to
+  # received ARP requests that resolve local target IP addresses
+  net.ipv4.conf.all.arp_announce: 2
+
+  # RFC 1337 fix F1
+  net.ipv4.tcp_rfc1337: 1
+
+  # Disable source packet routing
+  net.ipv4.conf.all.accept_source_route: 0
+  net.ipv6.conf.all.accept_source_route: 0
+  net.ipv4.conf.default.accept_source_route: 0
+  net.ipv6.conf.default.accept_source_route: 0
+
+  # protection against buffer overflows
+  kernel.randomize_va_space: 1
+
+  # Ignore send redirects
+  net.ipv4.conf.default.send_redirects: 0
+  net.ipv4.conf.all.send_redirects: 0
+
+  # Syncookies is used to prevent SYN-flooding attacks.
+  net.ipv4.tcp_syncookies: 1
+  net.ipv4.tcp_max_syn_backlog: 2048
+  net.ipv4.tcp_synack_retries: 2
+  net.ipv4.tcp_syn_retries: 5
+
+  net.ipv4.conf.all.log_martians: 1
+
+  # Ignore ICMP redirects
+  net.ipv4.conf.all.accept_redirects: 0
+  net.ipv6.conf.all.accept_redirects: 0
+  net.ipv4.conf.default.accept_redirects: 0
+  net.ipv6.conf.default.accept_redirects: 0
+
+
+# list of suid/sgid entries that can remain untouched
+os_security_suid_sgid_system_whitelist:
+  - '/bin/mount'
+  - '/bin/ping'
+  - '/bin/su'
+  - '/bin/umount'
+  - '/sbin/pam_timestamp_check'
+  - '/sbin/unix_chkpwd'
+  - '/usr/bin/at'
+  - '/usr/bin/gpasswd'
+  - '/usr/bin/locate'
+  - '/usr/bin/newgrp'
+  - '/usr/bin/passwd'
+  - '/usr/bin/ssh-agent'
+  - '/usr/libexec/utempter/utempter'
+  - '/usr/sbin/lockdev'
+  - '/usr/sbin/sendmail.sendmail'
+  - '/usr/bin/expiry'
+  # whitelist ipv6
+  - '/bin/ping6'
+  - '/usr/bin/traceroute6.iputils'
+  # whitelist nfs
+  - '/sbin/mount.nfs'
+  - '/sbin/umount.nfs'
+  # whitelist nfs4
+  - '/sbin/mount.nfs4'
+  - '/sbin/umount.nfs4'
+  # whitelist cron
+  - '/usr/bin/crontab'
+  # whitelist consolemssaging
+  - '/usr/bin/wall'
+  - '/usr/bin/write'
+  # whitelist locate
+  - '/usr/bin/mlocate'
+  # whitelist usermanagement
+  - '/usr/bin/chage'
+  - '/usr/bin/chfn'
+  - '/usr/bin/chsh'
+  # whitelist fuse
+  - '/bin/fusermount'
+  # whitelist pkexec
+  - '/usr/bin/pkexec'
+  # whitelist sudo
+  - '/usr/bin/sudo'
+  - '/usr/bin/sudoedit'
+  # whitelist postfix
+  - '/usr/sbin/postdrop'
+  - '/usr/sbin/postqueue'

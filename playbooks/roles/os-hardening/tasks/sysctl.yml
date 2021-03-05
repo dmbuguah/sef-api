@@ -1,0 +1,27 @@
+---
+
+- name: protect sysctl.conf
+  file: path='/etc/sysctl.conf' owner=root group=root mode=0440
+  become: yes
+
+- name: rebuild initramfs with starting pack of modules, if module loading at runtime is disabled
+  become: yes
+  template: src='modules.j2' dest='/etc/initramfs-tools/modules' owner=root group=root mode=0440
+  register: initramfs
+
+- name: update-initramfs
+  become: yes
+  command: 'update-initramfs -u'
+  when: initramfs.changed
+
+
+- name: Change various sysctl-settings, look at the sysctl-vars file for documentation
+  become: yes
+  sysctl:
+    name: '{{ item.key }}'
+    value: '{{ item.value }}'
+    sysctl_set: yes
+    state: present
+    reload: yes
+    ignoreerrors: yes
+  with_dict: '{{ sysctl_config }}'

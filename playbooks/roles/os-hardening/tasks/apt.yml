@@ -1,0 +1,8 @@
+---
+
+- name: remove packages
+  become: yes
+  apt: name='{{item}}' state=removed
+  with_items:
+    - "{{os_security_packages_list}}"
+  when: os_security_packages_clean

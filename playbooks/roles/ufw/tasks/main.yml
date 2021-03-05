@@ -1,0 +1,49 @@
+---
+
+- name: Install ufw
+  apt: name=ufw state=present
+  become: yes
+  tags: ["ufw"]
+
+- name: deny all by default
+  ufw: policy=deny
+  become: yes
+  tags: ["ufw"]
+
+- name: enable logging
+  ufw: logging=low
+  become: yes
+  notify:
+    - enable ufw
+  tags: ["ufw"]
+
+- name: 'Disable IPV6'
+  become: yes
+  notify:
+    - enable ufw
+  lineinfile:
+    name: /etc/ssh/ssh_config
+    state: present
+    regexp: '^IPV6=yes'
+    line: 'IPV6=no'
+  tags: ["ufw"]
+
+- name: allow port 80
+  ufw: port=80 proto=tcp rule=allow state=enabled
+  become: yes
+  tags: ["ufw"]
+
+- name: enable port 443 through firewall
+  ufw: port=443 proto=tcp rule=allow state=enabled
+  become: yes
+  tags: ["ufw"]
+
+- name: allow openssh
+  ufw: rule=allow name=OpenSSH
+  become: yes
+  tags: ["ufw"]
+
+- name: allow ssh
+  ufw: rule=limit port={{ssh_port}} proto=tcp
+  become: yes
+  tags: ["ufw"]

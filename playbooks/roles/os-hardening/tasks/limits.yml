@@ -1,0 +1,11 @@
+---
+
+- name: create limits.d directory
+  file: path='/etc/security/limits.d' owner=root group=root mode=0755 state=directory
+  become: yes
+  when: production_installation
+
+- name: Configure coredump limits
+  template: src='limits.conf.j2' dest='/etc/security/limits.d/10.hardcore.conf' owner=root group=root mode=0440
+  become: yes
+  when: production_installation

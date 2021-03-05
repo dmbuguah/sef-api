@@ -1,0 +1,16 @@
+---
+certbot_url: https://dl.eff.org/certbot-auto
+certbot_location: /opt/certbot-auto
+certbot_email: "danmbugua74@gmail.com"
+# dont change the name unless
+# you want to have more than one certbot-auto running
+# the name is just used to uniquely identify the cron task
+certbot_cron_name: "certbot"
+# randomly choose any minute in an hour
+certbot_cron_minute: "{{ 59 | random }}"
+certbot_cron_hour: "*"
+certbot_cron_day: "*"
+certbot_cron_weekday: "*"
+certbot_cron_log: "/var/log/certbot-renew.log"
+certbot_prehook: "service nginx stop"
+certbot_posthook: "service nginx start"

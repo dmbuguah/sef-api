@@ -1,0 +1,66 @@
+---
+
+- name: Install nginx
+  apt: name=nginx state=present
+  become: yes
+  tags: ["nginx"]
+
+- name: ensure nginx is started and enabled at boot
+  service: name=nginx state=started enabled=yes
+  become: yes
+  tags: ["nginx"]
+
+- name: overwrite the default mimetypes file
+  copy: src=nginx.default.mimetypes dest=/etc/nginx/mime.types
+  become: yes
+  notify:
+    - restart nginx
+  tags: ["nginx"]
+
+- name: overwrite the default nginx.conf
+  template: src=nginx.default.conf dest=/etc/nginx/nginx.conf
+  become: yes
+  notify:
+    - restart nginx
+  tags: ["nginx"]
+
+- name: add ansible user and root user to www-data
+  user: name={{item}} groups=www-data append=yes
+  become: yes
+  with_items:
+    - "{{ansible_user}}"
+  tags: ["nginx"]
+
+- name: Configure nginx custom config modules (templates)
+  template: src='{{ item.key }}' dest='/etc/nginx/conf.d/{{ item.value }}' owner=root group=root mode=0440
+  with_dict:
+     "general.conf.j2" : "general.http.conf"
+     "mitigate_dos.conf.j2" : "mitigate_dos.http.conf"
+  tags: ["nginx"]
+  notify:
+    - restart nginx
+  become: yes
+
+- name: Configure nginx custom config modules (file)
+  copy: src={{ item.key }} dest=/etc/nginx/conf.d/{{ item.value }}
+  with_dict:
+     "block_unknown_agents.conf" : "block_unknown_agents.http.conf"
+     "disable_unused_http_verbs.conf" : "disable_unused_http_verbs.server.conf"
+     "headers.conf": "headers.http.conf"
+  become: yes
+  notify:
+    - restart nginx
+  tags: ["nginx"]
+
+# generate dhparams
+- name: Generate Diffie-Hellman parameter file
+  become: yes
+  command: openssl dhparam -out '{{ dhparam_file }}' 2048 creates={{dhparam_file}}
+  args:
+    creates: "{{ dhparam_file }}"
+  tags: ["nginx"]
+
+- name: config should not be worldwide read or writeable
+  file: path="/etc/nginx" mode="o-rw" owner="root" group="root" recurse=yes
+  become: yes
+  tags: ["nginx"]

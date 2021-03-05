@@ -1,0 +1,5 @@
+---
+
+pg_unix_socket: "/var/run/postgresql/"
+pg_ubuntu_version: "xenial"
+pg_version: "10"

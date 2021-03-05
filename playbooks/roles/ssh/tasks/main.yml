@@ -1,0 +1,16 @@
+---
+
+- name: Install OpenSSH server
+  apt: name=openssh-server state=present
+  become: yes
+  tags: ["ssh"]
+
+- name: Overwrite default sshd_config
+  template: src=sshd_config dest=/etc/ssh/sshd_config
+  become: yes
+  tags: ["ssh"]
+
+- name: Overwrite default ssh_config
+  copy: src=ssh_config dest=/etc/ssh/ssh_config
+  become: yes
+  tags: ["ssh"]

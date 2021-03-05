@@ -1,0 +1,4 @@
+---
+
+dependencies:
+- {role: ssh, ssh_port: 22}

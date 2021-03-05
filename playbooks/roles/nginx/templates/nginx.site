@@ -1,0 +1,63 @@
+{% block upstreams %}{% endblock upstreams %}
+server {
+    {% if nginx_port %}listen {{nginx_port}};{% else %}listen 80;{% endif %}
+    {% if server_name %}server_name {{server_name}};{% endif %}
+
+    include /etc/nginx/conf.d/*.server.conf;
+
+    gzip on;
+    gzip_types  text/plain application/x-javascript text/xml text/css;
+    gzip_vary on;
+    gzip_disable "MSIE [1-6]\.(?!.*SV1)";
+
+    {% if server_name %}
+    access_log /var/log/nginx/{{server_name}}-http-access.log;
+    error_log /var/log/nginx/{{server_name}}-http-error.log;
+    {% else %}
+    access_log /var/log/nginx/{{nginx_log_name}}-http-access.log;
+    error_log /var/log/nginx/{{nginx_log_name}}-http-error.log;
+    {% endif %}
+
+    location = /favicon.ico { access_log off; log_not_found off; }
+    {% if ssl_on %}
+    ## redirect http to https only for frontend server ##
+    rewrite ^ https://$server_name$request_uri? permanent;
+    {% else %}
+    {% block http_locations %}{% endblock http_locations %}
+    {% endif %}
+}
+
+{% if ssl_on %}
+server {
+    include /etc/nginx/conf.d/*.server.conf;
+    {% if nginx_ssl_port %}listen {{nginx_ssl_port}} ssl;{% else %}listen 443 ssl;{% endif %}
+
+    {% if server_name %}server_name {{server_name}};{% endif %}
+
+    {% if server_name %}
+    access_log /var/log/nginx/{{server_name}}-https-access.log;
+    error_log /var/log/nginx/{{server_name}}-https-error.log;
+    {% else %}
+    access_log /var/log/nginx/{{nginx_log_name}}-https-access.log;
+    error_log /var/log/nginx/{{nginx_log_name}}-https-error.log;{% endif %}
+
+    ssl_protocols TLSv1 TLSv1.1 TLSv1.2;
+    ssl_ciphers ECDHE-RSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-SHA:AES128-SHA;
+    ssl_prefer_server_ciphers on;
+    ssl_dhparam {{dhparam_file}};
+    {% if ssl_cert %}ssl_certificate {{ssl_cert}} ;{% endif %}
+    {% if ssl_cert_key %}ssl_certificate_key {{ssl_cert_key}} ;{% endif %}
+    {% if ssl_trusted_certificate %}
+        resolver 8.8.8.8;
+        ssl_stapling on;
+        ssl_trusted_certificate {{ssl_trusted_certificate}} ;
+    {% endif %}
+
+    ssl_session_cache shared:SSL:10m;
+    ssl_session_timeout 10m;
+    
+    {% block https_locations %}{% endblock https_locations %}
+    location = /favicon.ico { access_log off; log_not_found off; }
+    {{ self.http_locations() }}
+}
+{% endif %}

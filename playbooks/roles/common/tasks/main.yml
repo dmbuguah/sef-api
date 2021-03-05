@@ -1,0 +1,51 @@
+---
+
+- name: Update packages
+  apt: update_cache=yes
+  become: yes
+  tags: ["common"]
+
+- name: Upgrade packages
+  shell: apt-get upgrade
+  become: yes
+  when: upgrade_packages
+  tags: ["common"]
+
+- name: Backup system localtime
+  command: mv /etc/localtime /etc/localtime-backup
+  become: yes
+  tags: ["common"]
+
+- name: Set localtime to America/Los_Angeles
+  file: state=link src=/usr/share/zoneinfo/America/Los_Angeles dest=/etc/localtime
+  become: yes
+  tags: ["common"]
+
+- name: Install build-essentials
+  apt: name=build-essential state=present
+  become: yes
+  tags: ["common"]
+
+- name: Install htop, tmux
+  apt: name={{ item }} state=present
+  become: yes
+  with_items:
+    - tmux
+    - htop
+  tags: ["common"]
+
+- name: Install text editors
+  apt: name={{ item }} state=present
+  become: yes
+  with_items:
+    - nano
+    - vim
+  tags: ["common"]
+
+- name: Overwrite default tmux config and issue files
+  template: src={{item.src}} dest={{item.dest}}
+  become: yes
+  with_items:
+    - {src: issue, dest: /etc/issue}
+    - {src: tmux.conf, dest: /etc/tmux.conf}
+  tags: ["common"]

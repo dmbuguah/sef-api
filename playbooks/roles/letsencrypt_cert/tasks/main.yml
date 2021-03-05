@@ -1,0 +1,6 @@
+---
+
+- name: Register a certificate for a domain
+  shell: '{{certbot_location}}/certbot-auto certonly --standalone -d {{certificate_domain}} --quiet --non-interactive -m {{certbot_email}} --agree-to --pre-hook "{{certbot_prehook}}" --post-hook "{{certbot_posthook}}" --no-self-upgrade'
+  become: yes
+  tags: ["letsencrypt_cert"]

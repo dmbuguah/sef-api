@@ -1,0 +1,6 @@
+---
+
+- name: Install Acct
+  apt: name=acct state=present
+  become: yes
+  tags: ["acct"]

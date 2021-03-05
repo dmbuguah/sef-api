@@ -1,0 +1,31 @@
+---
+
+- include: limits.yml
+  tags: ["os-hardening"]
+
+- include: login_defs.yml
+  tags: ["os-hardening"]
+
+- include: pam.yml
+  tags: ["os-hardening"]
+
+- include: securetty.yml
+  tags: ["os-hardening"]
+
+- include: suid_sgid.yml
+  tags: ["os-hardening"]
+
+- include: sysctl.yml
+  tags: ["os-hardening"]
+
+- include: rhosts.yml
+  tags: ["os-hardening"]
+
+- include: apt.yml
+  tags: ["os-hardening"]
+
+- include: file_access.yml
+  tags: ["os-hardening"]
+
+- include: unattended-upgrades.yml
+  tags: ["os-hardening"]

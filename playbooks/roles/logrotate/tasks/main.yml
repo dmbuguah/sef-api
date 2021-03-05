@@ -1,0 +1,6 @@
+---
+
+- name: Install logrotate
+  apt: name=logrotate state=present
+  become: yes
+  tags: ["logrotate"]
