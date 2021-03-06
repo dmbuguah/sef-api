@@ -6,7 +6,6 @@ from sef.facility.models import Facility, FacilityLocationDetail
 
 def geocode_reverse():
     facilities = Facility.objects.filter(latlong__isnull=False)
-    import pdb; pdb.set_trace()
     for fac in facilities:
         latlong = fac.latlong.coords
         geocoder = Geocoder()

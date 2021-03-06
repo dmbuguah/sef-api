@@ -45,13 +45,55 @@ class FacilityViewSet(NuggetBaseViewSet):
             } for q in facilities]
 
         _response = {
-            'location_case': {
-                'title': 'Facility location data',
+            'facility_location': {
+                'title': 'Search For Facility Near You',
                 'analysis_data': qualified_facilities
             },
         }
 
-        return qualified_facilities
+        return _response
+
+
+    def get_keph_levels(self):
+        keph_level = models.Facility.objects.filter(
+            keph_level__isnull=False).values(
+            'keph_level').order_by('keph_level').distinct('keph_level')
+
+        qualified_keph_level = [
+            {
+                'name': q['keph_level'],
+                'id': i
+            } for i,q in enumerate(keph_level)]
+        return qualified_keph_level
+
+
+    def get_facility_owner(self):
+        facility_owner = models.Facility.objects.filter(
+            keph_level__isnull=False).values(
+            'owner_name').order_by(
+            'owner_name').distinct('owner_name')
+
+        qualified_facility_owner = [
+            {
+                'name': q['owner_name'],
+                'id': i
+            } for i,q in enumerate(facility_owner)]
+        return qualified_facility_owner
+
+
+    def get_facility_type(self):
+        facility_owner = models.Facility.objects.filter(
+            keph_level__isnull=False).values(
+            'facility_type').order_by(
+            'facility_type').distinct('facility_type')
+
+        qualified_facility_type = [
+            {
+                'name': q['facility_type'],
+                'id': i
+            } for i,q in enumerate(facility_owner)]
+        return qualified_facility_type
+
 
     @list_route(methods=('get',))
     def facilities_near_me(self, request):
@@ -59,6 +101,15 @@ class FacilityViewSet(NuggetBaseViewSet):
         longitude = self.request.query_params['lng']
 
         _response = self.get_facilities(latitude, longitude)
+
+        keph_levels = self.get_keph_levels()
+        facility_owner = self.get_facility_owner()
+        facility_type = self.get_facility_type()
+
+        _response['keph_levels'] = keph_levels
+        _response['facility_owner'] = facility_owner
+        _response['facility_type'] = facility_type
+
         return Response(_response)
 
 class FacilityLocationDetailViewSet(NuggetBaseViewSet):
