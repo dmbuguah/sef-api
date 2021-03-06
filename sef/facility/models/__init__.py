@@ -1,3 +1,3 @@
-from .models import Case, CaseFile, CallLog, Message, Location, LocationDetails
+from .models import Facility, FacilityLocationDetail
 
-__all__ = [Case, CaseFile, CallLog, Message, Location, LocationDetails]
+__all__ = [Facility, FacilityLocationDetail]

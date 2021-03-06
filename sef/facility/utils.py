@@ -1,4 +1,4 @@
-"""Case Utils"""
+"""Facility Utils"""
 import os
 
 

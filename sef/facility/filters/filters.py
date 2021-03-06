@@ -1,27 +1,18 @@
 import django_filters
 
-import sef.case.models as models
+import sef.facility.models as models
 from sef.common.filters import BaseFilterSet
 
 
-class CaseFilter(BaseFilterSet):
+class FacilityFilter(BaseFilterSet):
 
     class Meta:
-        model = models.Case
-        fields = ('title', 'description')
+        model = models.Facility
+        fields = ('facility_name', 'facility_type')
 
 
-class CaseFileFilter(BaseFilterSet):
-
-    class Meta:
-        model = models.CaseFile
-        fields = ('platform', 'file_path',)
-
-
-class LocationeFilter(BaseFilterSet):
+class FacilityLocationDetailFilter(BaseFilterSet):
 
     class Meta:
-        model = models.Location
-        fields = (
-            'case', 'source',
-            'confidence', 'timestamp')
+        model = models.FacilityLocationDetail
+        fields = ('place', 'locality',)
