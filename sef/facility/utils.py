@@ -7,22 +7,29 @@ import urllib3
 
 from sef.constants import KMFL_URL, KMFL_LOGIN_URL, HEADERS
 
-def create_session():
-    username = os.getenv('KMFL_USERNAME')
-    password = os.getenv('KMFL_PASSWORD')
+class CreateSession:
+    def __init__(self):
+        self.username = os.getenv('KMFL_USERNAME')
+        self.password = os.getenv('KMFL_PASSWORD')
+        self.session = None
+        self.session_response = None
 
-    data = {
-        'username': username,
-        'password': password
-    }
-    urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
-    verify=True
+    def create_session(self):
+        data = {
+            'username': self.username,
+            'password': self.password
+        }
+        urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
+        verify=True
 
-    session = requests.Session()
+        if not self.session and not self.session_response:
+            session = requests.Session()
+            self.session = session
 
-    login_url = KMFL_URL + KMFL_LOGIN_URL
-    import pdb; pdb.set_trace()
-    session_response = session.post(
-        url=login_url, data=json.dumps(data), headers=HEADERS, verify=verify)
+            login_url = KMFL_URL + KMFL_LOGIN_URL
+            session_response = session.post(
+                url=login_url, data=json.dumps(data),headers=HEADERS,
+                verify=verify)
 
-    return (session, session_response)
+            self.session = session
+            self.session_response = session_response

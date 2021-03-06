@@ -8,7 +8,7 @@ class FacilitySerializer(serializers.ModelSerializer):
         model = models.Facility
         fields = (
             'id', 'facility_name', 'facility_type', 'owner_name',
-            'operation_status_name',)
+            'operation_status_name', 'latlong')
 
 
 class FacilityLocationDetailSerializer(serializers.ModelSerializer):
