@@ -1,3 +1,3 @@
-from .filters import UserFilter, UserProfileFilter
+from .filters import UserFilter
 
-__all__ = [UserFilter, UserProfileFilter]
+__all__ = [UserFilter]

@@ -1,3 +1,3 @@
-from .filters import CaseFilter, CaseFileFilter
+from .filters import FacilityFilter, FacilityLocationDetailFilter
 
 __all__ = ['FacilityFilter', 'FacilityLocationDetailFilter']
