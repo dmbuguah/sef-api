@@ -1,7 +1,7 @@
 from sef.common.views import NuggetBaseViewSet
-from sef.case import filters
-from sef.case import serializers
-from sef.case import models
+from sef.facility import filters
+from sef.facility import serializers
+from sef.facility import models
 
 from sef.facility.tasks.utils import geocode_reverse
 
@@ -9,9 +9,9 @@ from rest_framework.response import Response
 from rest_framework.decorators import list_route
 
 
-class FacilitySerializer(NuggetBaseViewSet):
+class FacilityViewSet(NuggetBaseViewSet):
     """
-    This provides a way to add Case details.
+    This provides a way to add Facility details.
     """
     permission_classes = (AllowAny, )
     queryset = models.Facility.objects.all()
@@ -21,18 +21,9 @@ class FacilitySerializer(NuggetBaseViewSet):
 
 class FacilityLocationDetailViewSet(NuggetBaseViewSet):
     """
-    This provides a way to add Case details.
+    This provides a way to add Facility Location details.
     """
     permission_classes = (AllowAny, )
-    queryset = models.CaseFile.objects.all()
-    filter_class = filters.CaseFileFilter
-    serializer_class = serializers.CaseFileSerializer
-
-
-class LocationViewSet(NuggetBaseViewSet):
-    """
-    This provides a way to add Case details.
-    """
-    permission_classes = (AllowAny, )
-    queryset = models.Location.objects.all()
-    serializer_class = serializers.LocationSerializer
+    queryset = models.FacilityLocationDetail.objects.all()
+    filter_class = filters.FacilityLocationDetailFilter
+    serializer_class = serializers.FacilityLocationDetailFileSerializer

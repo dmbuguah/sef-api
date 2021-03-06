@@ -26,7 +26,7 @@ from sef.user.views import MeView
 
 apipatterns = ([
     path('user/', include('sef.user.urls')),
-    path('case/', include('sef.case.urls')),
+    path('facility/', include('sef.facility.urls')),
 ], 'v1')
 
 authpatterns = [

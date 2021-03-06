@@ -1,10 +1,10 @@
 from rest_framework.routers import SimpleRouter
 
-import sef.case.views as views
+import sef.facility.views as views
 
 router = SimpleRouter()
-router.register(r'cases', views.CaseViewSet, 'cases')
-router.register(r'case_files', views.CaseFileViewSet, 'case_files')
-router.register(r'location', views.LocationViewSet, 'location')
+router.register(r'facilities', views.FacilityViewSet, 'facilities')
+router.register(
+    r'facility_location_details', views.FacilityLocationDetailViewSet, 'facility_location_details')
 
 urlpatterns = router.urls

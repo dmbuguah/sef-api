@@ -1,3 +1,3 @@
-from .views import CaseViewSet, CaseFileViewSet, LocationViewSet
+from .views import FacilityViewSet, FacilityLocationDetailViewSet
 
-__all__ = [CaseViewSet, CaseFileViewSet, LocationViewSet]
+__all__ = [FacilityViewSet, FacilityLocationDetailViewSet]

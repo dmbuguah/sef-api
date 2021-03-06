@@ -1,3 +1,3 @@
-from .serializers import CaseSerializer, CaseFileSerializer, LocationSerializer
+from .serializers import FacilitySerializer, FacilityLocationDetailSerializer
 
-__all__ = ['CaseSerializer', 'CaseFileSerializer', 'LocationSerializer']
+__all__ = ['FacilitySerializer', 'FacilityLocationDetailSerializer']
