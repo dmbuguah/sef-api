@@ -5,7 +5,7 @@ from sef.common.models import AbstractBase
 
 
 class Facility(AbstractBase):
-    facility_id = models.UUIDField()
+    # facility_id = models.UUIDField()
     facility_name = models.CharField(max_length=255, blank=True, null=True)
     latlong = PointField(null=True, blank=True)
     facility_type = models.CharField(max_length=255, blank=True, null=True)
