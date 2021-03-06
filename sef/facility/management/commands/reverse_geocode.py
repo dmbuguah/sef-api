@@ -1,7 +1,7 @@
 """Reverse Geocode"""
 from django.core.management.base import BaseCommand
-from sef.case.tasks.utils import geocode_reverse
 
+from sef.facility.tasks.utils import geocode_reverse
 
 class Command(BaseCommand):
     """Reverse Geocode; just a convinient helper."""
@@ -15,7 +15,7 @@ class Command(BaseCommand):
             help='File with LatLong')
 
     def handle(self, *args, **options):
-        """Entry point for the load dme document command."""
+        """Entry point for the Reverse Geocode command."""
         reverse_file = options.get('file')
 
         geocode_reverse(reverse_file=reverse_file)

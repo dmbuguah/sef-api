@@ -1,3 +1,3 @@
-from .views import UserViewSet, UserProfileViewSet, MeView
+from .views import UserViewSet, MeView
 
-__all__ = ['UserViewSet', 'UserProfileViewSet', 'MeView']
+__all__ = ['UserViewSet', 'MeView']

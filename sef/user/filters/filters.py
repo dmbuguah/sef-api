@@ -11,12 +11,3 @@ class UserFilter(BaseFilterSet):
         fields = (
             'first_name', 'last_name', 'email',
             'phone_number',)
-
-
-class UserProfileFilter(BaseFilterSet):
-
-    class Meta:
-        model = models.UserProfile
-        fields = (
-            'user__first_name', 'user__last_name', 'user__email',
-            'user__phone_number',)

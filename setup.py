@@ -94,7 +94,6 @@ setup(
         'django-filter==1.1.0',
         'django-cors-headers==2.2.0',
         'dj-database-url==0.5.0',
-        'Click==6.7',
         'sarge==0.1.5',
         'ipython==6.2.0',
         'django==2.0.4',
@@ -103,7 +102,6 @@ setup(
         'drfdocs==0.0.11',
         'djangorestframework-gis==0.12.0',
         'django-sentry-400-middleware==0.3.0',
-        'Pillow==5.2.0',
         'django-sendfile==0.3.11',
         'social_auth_core==1.7.0',
         'social-auth-app-django==2.1.0',
@@ -111,8 +109,9 @@ setup(
         'ansible==2.6.2',
         'django-rest-framework-docs',
         'django-social-auth',
-        'social-auth-app-django',
         'coreapi',
+        'mapbox',
+        'progress'
     ],
     scripts=[
         'bin/sef_manage',

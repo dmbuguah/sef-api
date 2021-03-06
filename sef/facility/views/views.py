@@ -7,6 +7,7 @@ from sef.facility.tasks.utils import geocode_reverse
 
 from rest_framework.response import Response
 from rest_framework.decorators import list_route
+from rest_framework.permissions import AllowAny
 
 
 class FacilityViewSet(NuggetBaseViewSet):
@@ -26,4 +27,4 @@ class FacilityLocationDetailViewSet(NuggetBaseViewSet):
     permission_classes = (AllowAny, )
     queryset = models.FacilityLocationDetail.objects.all()
     filter_class = filters.FacilityLocationDetailFilter
-    serializer_class = serializers.FacilityLocationDetailFileSerializer
+    serializer_class = serializers.FacilityLocationDetailSerializer
