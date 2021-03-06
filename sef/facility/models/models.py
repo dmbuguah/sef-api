@@ -5,7 +5,7 @@ from sef.common.models import AbstractBase
 
 
 class Facility(AbstractBase):
-    # facility_id = models.UUIDField()
+    facility_id = models.UUIDField(null=True, blank=True)
     facility_name = models.CharField(max_length=255, blank=True, null=True)
     latlong = PointField(null=True, blank=True)
     facility_type = models.CharField(max_length=255, blank=True, null=True)
@@ -13,6 +13,9 @@ class Facility(AbstractBase):
     operation_status_name = models.CharField(
         max_length=255, blank=True, null=True)
     keph_level = models.CharField(max_length=255, blank=True, null=True)
+    county_name = models.CharField(max_length=255, blank=True, null=True)
+    constituency_name = models.CharField(max_length=255, blank=True, null=True)
+    ward_name = models.CharField(max_length=255, blank=True, null=True)
 
 
 class FacilityLocationDetail(AbstractBase):
