@@ -44,7 +44,10 @@ def process_facility_data(next_url=None):
                 'owner_name': r['owner_name'],
                 'latlong': latlong,
                 'keph_level': r['keph_level_name'],
-                'operation_status_name': r['operation_status_name']
+                'operation_status_name': r['operation_status_name'],
+                'county_name': r['county_name'],
+                'constituency_name': r['constituency_name'],
+                'county_name': r['county_name'],
             }
             facility_data.append(fd)
 
