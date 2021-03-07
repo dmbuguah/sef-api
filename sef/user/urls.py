@@ -1,3 +1,4 @@
+"""User module urls."""
 from rest_framework.routers import SimpleRouter
 
 import sef.user.views as views

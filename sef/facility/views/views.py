@@ -1,5 +1,8 @@
+"""Facility views."""
 from rest_framework.decorators import list_route
 from rest_framework.response import Response
+from rest_framework.permissions import AllowAny
+
 from sef.facility import filters
 from sef.facility import serializers
 from sef.facility import models
@@ -9,15 +12,10 @@ from sef.facility.analytics.analysis import (
     get_facilities, get_keph_levels, get_facility_owner,
     get_facility_type, search_facility)
 
-from rest_framework.response import Response
-from rest_framework.decorators import list_route
-from rest_framework.permissions import AllowAny
-
 
 class FacilityViewSet(SeFBaseViewSet):
-    """
-    This provides a way to add Facility details.
-    """
+    """This provides a way to add Facility details."""
+
     permission_classes = (AllowAny, )
     queryset = models.Facility.objects.all()
     filter_class = filters.FacilityFilter
@@ -25,6 +23,7 @@ class FacilityViewSet(SeFBaseViewSet):
 
     @list_route(methods=('get',))
     def facilities_near_me(self, request):
+        """Get facilities near the user."""
         latitude = self.request.query_params['lat']
         longitude = self.request.query_params['lng']
 
@@ -42,6 +41,7 @@ class FacilityViewSet(SeFBaseViewSet):
 
     @list_route(methods=('get',))
     def search_facilities(self, request):
+        """Search facilities."""
         lat = self.request.query_params['lat']
         lng = self.request.query_params['lng']
         facility_type = self.request.query_params['facility_type_value']
@@ -54,10 +54,10 @@ class FacilityViewSet(SeFBaseViewSet):
 
         return Response(response)
 
+
 class FacilityLocationDetailViewSet(SeFBaseViewSet):
-    """
-    This provides a way to add Facility Location details.
-    """
+    """This provides a way to add Facility Location details."""
+
     permission_classes = (AllowAny, )
     queryset = models.FacilityLocationDetail.objects.all()
     filter_class = filters.FacilityLocationDetailFilter

@@ -1,3 +1,5 @@
+"""SeF constants."""
+
 KMFL_URL = 'https://api.kmhfltest.health.go.ke/'
 
 KMFL_LOGIN_URL = 'api/rest-auth/login/'

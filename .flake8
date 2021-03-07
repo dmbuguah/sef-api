@@ -1,3 +1,3 @@
 [flake8]
-exclude=migrations,env,bin,venv,build,.tox,.cache,.git,.pytest_cache,tests,manage.py,sef/__init__.py,docs,setup.py
+exclude=migrations,env,bin,venv,build,.tox,.cache,.git,.pytest_cache,tests,manage.py,sef/__init__.py,docs,setup.py,sef/config
 max-complexity = 6

@@ -1,4 +1,4 @@
-"""Facility Utils"""
+"""Facility Utils."""
 import json
 import requests
 
@@ -7,21 +7,26 @@ import urllib3
 
 from sef.constants import KMFL_URL, KMFL_LOGIN_URL, HEADERS
 
+
 class CreateSession:
+    """Create session class."""
+
     def __init__(self):
+        """Create session init method."""
         self.username = os.getenv('KMFL_USERNAME')
         self.password = os.getenv('KMFL_PASSWORD')
         self.session = None
         self.session_response = None
 
     def create_session(self):
+        """Create user session."""
         data = {
             'username': self.username,
             'password': self.password
         }
         urllib3.disable_warnings(
             urllib3.exceptions.InsecureRequestWarning)
-        verify=True
+        verify = True
 
         if not self.session and not self.session_response:
             session = requests.Session()
@@ -29,7 +34,7 @@ class CreateSession:
 
             login_url = KMFL_URL + KMFL_LOGIN_URL
             session_response = session.post(
-                url=login_url, data=json.dumps(data),headers=HEADERS,
+                url=login_url, data=json.dumps(data), headers=HEADERS,
                 verify=verify)
 
             self.session = session
