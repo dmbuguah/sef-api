@@ -34,5 +34,5 @@ class SelectSerializerMixin:
             return super().get_serializer_class()
 
 
-class NuggetBaseViewSet(SelectSerializerMixin, ModelViewSet):
+class SeFBaseViewSet(SelectSerializerMixin, ModelViewSet):
     pass
