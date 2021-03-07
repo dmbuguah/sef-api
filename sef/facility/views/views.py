@@ -1,21 +1,20 @@
-from django.contrib.gis.geos import Point
-from django.contrib.gis.measure import Distance
-
 from rest_framework.decorators import list_route
 from rest_framework.response import Response
-from sef.common.views import NuggetBaseViewSet
 from sef.facility import filters
 from sef.facility import serializers
 from sef.facility import models
 
-from sef.facility.tasks.utils import geocode_reverse
+from sef.common.views import SeFBaseViewSet
+from sef.facility.analytics.analysis import (
+    get_facilities, get_keph_levels, get_facility_owner,
+    get_facility_type, search_facility)
 
 from rest_framework.response import Response
 from rest_framework.decorators import list_route
 from rest_framework.permissions import AllowAny
 
 
-class FacilityViewSet(NuggetBaseViewSet):
+class FacilityViewSet(SeFBaseViewSet):
     """
     This provides a way to add Facility details.
     """
@@ -24,87 +23,16 @@ class FacilityViewSet(NuggetBaseViewSet):
     filter_class = filters.FacilityFilter
     serializer_class = serializers.FacilitySerializer
 
-    def get_facilities(self, latitude, longitude):
-        point = Point(float(longitude), float(latitude))
-        facilities = models.Facility.objects.filter(
-            latlong__distance_lt=(point, Distance(km=2))).values(
-                'id', 'facility_name', 'latlong', 'facility_type', 'owner_name',
-                'operation_status_name', 'keph_level', 'county_name')
-
-        qualified_facilities = [
-            {
-                'id': q['id'],
-                'lat': q['latlong'].coords[1],
-                'lng': q['latlong'].coords[0],
-                'facility_name': q['facility_name'],
-                'facility_type': q['facility_type'],
-                'owner_name': q['owner_name'],
-                'operation_status_name': q['operation_status_name'],
-                'keph_level': q['keph_level'],
-                'county_name': q['county_name']
-            } for q in facilities]
-
-        _response = {
-            'facility_location': {
-                'title': 'Search For Facility Near You',
-                'analysis_data': qualified_facilities
-            },
-        }
-
-        return _response
-
-
-    def get_keph_levels(self):
-        keph_level = models.Facility.objects.filter(
-            keph_level__isnull=False).values(
-            'keph_level').order_by('keph_level').distinct('keph_level')
-
-        qualified_keph_level = [
-            {
-                'name': q['keph_level'],
-                'id': i
-            } for i,q in enumerate(keph_level)]
-        return qualified_keph_level
-
-
-    def get_facility_owner(self):
-        facility_owner = models.Facility.objects.filter(
-            keph_level__isnull=False).values(
-            'owner_name').order_by(
-            'owner_name').distinct('owner_name')
-
-        qualified_facility_owner = [
-            {
-                'name': q['owner_name'],
-                'id': i
-            } for i,q in enumerate(facility_owner)]
-        return qualified_facility_owner
-
-
-    def get_facility_type(self):
-        facility_owner = models.Facility.objects.filter(
-            keph_level__isnull=False).values(
-            'facility_type').order_by(
-            'facility_type').distinct('facility_type')
-
-        qualified_facility_type = [
-            {
-                'name': q['facility_type'],
-                'id': i
-            } for i,q in enumerate(facility_owner)]
-        return qualified_facility_type
-
-
     @list_route(methods=('get',))
     def facilities_near_me(self, request):
         latitude = self.request.query_params['lat']
         longitude = self.request.query_params['lng']
 
-        _response = self.get_facilities(latitude, longitude)
+        _response = get_facilities(latitude, longitude)
 
-        keph_levels = self.get_keph_levels()
-        facility_owner = self.get_facility_owner()
-        facility_type = self.get_facility_type()
+        keph_levels = get_keph_levels()
+        facility_owner = get_facility_owner()
+        facility_type = get_facility_type()
 
         _response['keph_levels'] = keph_levels
         _response['facility_owner'] = facility_owner
@@ -112,7 +40,21 @@ class FacilityViewSet(NuggetBaseViewSet):
 
         return Response(_response)
 
-class FacilityLocationDetailViewSet(NuggetBaseViewSet):
+    @list_route(methods=('get',))
+    def search_facilities(self, request):
+        lat = self.request.query_params['lat']
+        lng = self.request.query_params['lng']
+        facility_type = self.request.query_params['facility_type_value']
+        keph_level = self.request.query_params['keph_level_value']
+        facility_owner = self.request.query_params['facility_owner_value']
+        radius = self.request.query_params['radius']
+
+        response = search_facility(
+            lat, lng, facility_type, keph_level, radius, facility_owner)
+
+        return Response(response)
+
+class FacilityLocationDetailViewSet(SeFBaseViewSet):
     """
     This provides a way to add Facility Location details.
     """

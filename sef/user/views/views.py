@@ -2,14 +2,14 @@ from rest_framework import generics, status, decorators
 from rest_framework.permissions import AllowAny
 from django.core.exceptions import ObjectDoesNotExist
 
-from sef.common.views import NuggetBaseViewSet
+from sef.common.views import SeFBaseViewSet
 import sef.user.filters as filters
 import sef.user.serializers as serializers
 import sef.user.models as models
 from rest_framework.response import Response
 
 
-class UserViewSet(NuggetBaseViewSet):
+class UserViewSet(SeFBaseViewSet):
     """
     This is the user's endpoint. It contains the details that are stored for
     a user using our system.
