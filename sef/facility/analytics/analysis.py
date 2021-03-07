@@ -83,7 +83,7 @@ def get_facility_type():
 
 def search_facility(
     lat, lng, facility_type, keph_level, radius, facility_owner):
-    import pdb; pdb.set_trace()
+    point = Point(float(lng), float(lat))
     facilities = models.Facility.objects.filter(
         latlong__distance_lt=(point, Distance(km=radius)),
         facility_type=facility_type, keph_level=keph_level,
