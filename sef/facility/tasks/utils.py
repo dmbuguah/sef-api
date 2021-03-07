@@ -11,6 +11,7 @@ from django.contrib.gis.geos import fromstr
 
 
 def get_kmfl_falicities(next_url=None):
+    """Get KMFL facility data from the API."""
     cs = CreateSession()
     cs.create_session()
 
@@ -25,35 +26,38 @@ def get_kmfl_falicities(next_url=None):
 
 
 def process_facility_data(next_url=None):
+    """Preprocess facility data from the KMFL API."""
     result_data = get_kmfl_falicities(next_url=next_url)
     results = result_data['results']
 
-    if results:
-        facility_data = []
+    if not results:
+        return
 
-        for r in results:
-            l_l = r['lat_long']
-            latlong = fromstr(
-                f'POINT({float(l_l[1])} {float(l_l[0])})', srid=4326) if \
-                    l_l else None
+    facility_data = []
 
-            fd = {
-                'facility_id': r['id'],
-                'facility_name': r['name'],
-                'facility_type': r['facility_type_name'],
-                'owner_name': r['owner_name'],
-                'latlong': latlong,
-                'keph_level': r['keph_level_name'],
-                'operation_status_name': r['operation_status_name'],
-                'county_name': r['county_name'],
-                'constituency_name': r['constituency_name'],
-                'county_name': r['county_name'],
-            }
-            facility_data.append(fd)
+    for r in results:
+        l_l = r['lat_long']
+        latlong = fromstr(
+            f'POINT({float(l_l[1])} {float(l_l[0])})', srid=4326) if \
+                l_l else None
 
-        if facility_data:
-            Facility.objects.bulk_create(
-                    [ Facility(**f) for f in facility_data ])
+        fd = {
+            'facility_id': r['id'],
+            'facility_name': r['name'],
+            'facility_type': r['facility_type_name'],
+            'owner_name': r['owner_name'],
+            'latlong': latlong,
+            'keph_level': r['keph_level_name'],
+            'operation_status_name': r['operation_status_name'],
+            'county_name': r['county_name'],
+            'constituency_name': r['constituency_name'],
+            'county_name': r['county_name'],
+        }
+        facility_data.append(fd)
+
+    if facility_data:
+        Facility.objects.bulk_create(
+                [ Facility(**f) for f in facility_data ])
 
     has_next = result_data['next']
     while has_next:

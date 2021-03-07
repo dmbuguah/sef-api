@@ -1,4 +1,4 @@
-"""nugget URL Configuration
+"""Sef URL Configuration
 
 The `urlpatterns` list routes URLs to views. For more information please see:
     https://docs.djangoproject.com/en/1.11/topics/http/urls/
@@ -43,7 +43,6 @@ urlpatterns = [
     path('social/', include(('social_django.urls', 'social'))),
     path('docs/', include_docs_urls(
         title='Sef World', public=False)),
-    # url(r'^media\/(?P<path>.*)$', serve_media, name='serve_media'),
 ]
 
 if settings.DEBUG is True:

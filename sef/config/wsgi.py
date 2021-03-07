@@ -1,5 +1,5 @@
 """
-WSGI config for nugget project.
+WSGI config for sef project.
 
 It exposes the WSGI callable as a module-level variable named ``application``.
 

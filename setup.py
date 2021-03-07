@@ -1,3 +1,4 @@
+"""Setup file."""
 import subprocess
 import os
 import re
@@ -110,8 +111,7 @@ setup(
         'django-rest-framework-docs',
         'django-social-auth',
         'coreapi',
-        'mapbox',
-        'progress'
+        'mapbox'
     ],
     scripts=[
         'bin/sef_manage',

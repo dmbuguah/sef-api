@@ -94,7 +94,6 @@ INSTALLED_APPS = [
 
 LOCAL_APPS = [
     'sef.common.apps.CommonConfig',
-    'sef.pg_search.apps.SearchConfig',
     'sef.user.apps.UserConfig',
     'sef.facility.apps.FacilityConfig',
 ]

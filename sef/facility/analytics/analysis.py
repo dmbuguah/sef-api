@@ -6,6 +6,8 @@ from sef.facility import models
 
 
 def compose_payload(facilities):
+    """Helper to compose facility payload."""
+
     qualified_facilities = [
         {
             'id': q['id'],
@@ -29,11 +31,14 @@ def compose_payload(facilities):
     return response
 
 def get_facilities(latitude, longitude):
+    """Given the latitude and longitude, return facilities."""
     point = Point(float(longitude), float(latitude))
+
     facilities = models.Facility.objects.filter(
         latlong__distance_lt=(point, Distance(km=2))).values(
-            'id', 'facility_name', 'latlong', 'facility_type', 'owner_name',
-            'operation_status_name', 'keph_level', 'county_name')
+            'id', 'facility_name', 'latlong', 'facility_type',
+            'owner_name', 'operation_status_name', 'keph_level',
+            'county_name')
 
     response = compose_payload(facilities)
 
@@ -41,6 +46,7 @@ def get_facilities(latitude, longitude):
 
 
 def get_keph_levels():
+    """Get all distinct kph levels."""
     keph_level = models.Facility.objects.filter(
         keph_level__isnull=False).values(
         'keph_level').order_by('keph_level').distinct('keph_level')
@@ -54,6 +60,7 @@ def get_keph_levels():
 
 
 def get_facility_owner():
+    """Get all distinct facility owners."""
     facility_owner = models.Facility.objects.filter(
         keph_level__isnull=False).values(
         'owner_name').order_by(
@@ -68,6 +75,7 @@ def get_facility_owner():
 
 
 def get_facility_type():
+    """Get all distinct facility owners."""
     facility_owner = models.Facility.objects.filter(
         keph_level__isnull=False).values(
         'facility_type').order_by(
@@ -83,13 +91,17 @@ def get_facility_type():
 
 def search_facility(
     lat, lng, facility_type, keph_level, radius, facility_owner):
+    """Search Faciities given search parameter."""
     point = Point(float(lng), float(lat))
     facilities = models.Facility.objects.filter(
-        latlong__distance_lt=(point, Distance(km=radius)),
-        facility_type=facility_type, keph_level=keph_level,
+        latlong__distance_lt=(point,
+        Distance(km=radius)),
+        facility_type=facility_type,
+        keph_level=keph_level,
         owner_name=facility_owner).values(
-            'id', 'facility_name', 'latlong', 'facility_type', 'owner_name',
-            'operation_status_name', 'keph_level', 'county_name')
+            'id', 'facility_name', 'latlong', 'facility_type',
+            'owner_name', 'operation_status_name', 'keph_level',
+            'county_name')
 
     response = compose_payload(facilities)
 

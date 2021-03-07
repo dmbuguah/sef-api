@@ -1,10 +1,8 @@
 import django_filters
 
 import sef.user.models as models
-from sef.common.filters import BaseFilterSet
 
-
-class UserFilter(BaseFilterSet):
+class UserFilter(django_filters.FilterSet):
 
     class Meta:
         model = models.User
