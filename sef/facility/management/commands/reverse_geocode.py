@@ -1,7 +1,8 @@
-"""Reverse Geocode"""
+"""Reverse Geocode."""
 from django.core.management.base import BaseCommand
 
 from sef.facility.tasks.utils import geocode_reverse
+
 
 class Command(BaseCommand):
     """Reverse Geocode; just a convinient helper."""

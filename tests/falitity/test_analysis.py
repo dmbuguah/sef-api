@@ -56,5 +56,4 @@ class TestAnalyticsModule(TestCase):
         response = search_facility(
             '-1.2067487', '36.7772037', 'Dispensary', 'Level 4', 6,
             'Ministry Of Health')
-        import pdb; pdb.set_trace()
         assert len(response['facility_location']['analysis_data']) == 4

@@ -1,3 +1,4 @@
+"""User models."""
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 from django.utils import timezone
@@ -7,14 +8,10 @@ from sef.common.models import AbstractBase
 
 
 class CustomUserManager(BaseUserManager):
-    """
-    A custom user manager for sef
-    """
+    """A custom user manager for sef."""
 
     def create_user(self, email=None, password=None, **extra_fields):
-        """
-        Creates and saves a User with the given email, password.
-        """
+        """Create and save a User with the given email, password."""
         if not email:
             raise ValueError('Users must have an email address')
 
@@ -26,10 +23,7 @@ class CustomUserManager(BaseUserManager):
         return user
 
     def create_superuser(self, email=None, password=None, **extra_fields):
-        """
-        Creates and saves a User with the given email, date of
-        birth and password.
-        """
+        """Create and save a User."""
         user = self.create_user(
             email=email,
             password=password,
@@ -41,9 +35,8 @@ class CustomUserManager(BaseUserManager):
 
 
 class User(AbstractBase, AbstractBaseUser):
-    """
-    A custom user model.
-    """
+    """A custom user model."""
+
     REQUIRED_FIELDS = []
     USERNAME_FIELD = 'email'
     email = models.EmailField(verbose_name='email address',
@@ -60,7 +53,9 @@ class User(AbstractBase, AbstractBaseUser):
 
     @property
     def full_name(self):
+        """Return user full name."""
         return self.first_name + ' ' + self.last_name
 
     def __str__(self):
+        """Return string repr of the user."""
         return self.email

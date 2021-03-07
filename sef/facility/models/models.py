@@ -1,3 +1,4 @@
+"""Facility models."""
 from django.db import models
 from django.contrib.gis.db.models import PointField
 
@@ -6,6 +7,7 @@ from sef.common.models import AbstractBase
 
 class Facility(AbstractBase):
     """Model to holde Facility details."""
+
     facility_id = models.UUIDField(null=True, blank=True)
     facility_name = models.CharField(max_length=255, blank=True, null=True)
     latlong = PointField(null=True, blank=True)
@@ -21,6 +23,7 @@ class Facility(AbstractBase):
 
 class FacilityLocationDetail(AbstractBase):
     """Model to hold Facility location details."""
+
     facility = models.ForeignKey(
         Facility, on_delete=models.PROTECT,
         related_name='facility_facilitylocationdetails')

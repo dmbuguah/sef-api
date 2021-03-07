@@ -1,3 +1,4 @@
+"""Facility app urls."""
 from rest_framework.routers import SimpleRouter
 
 import sef.facility.views as views

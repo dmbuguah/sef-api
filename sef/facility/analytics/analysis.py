@@ -6,8 +6,7 @@ from sef.facility import models
 
 
 def compose_payload(facilities):
-    """Helper to compose facility payload."""
-
+    """Compose facility payload."""
     qualified_facilities = [
         {
             'id': q['id'],
@@ -29,6 +28,7 @@ def compose_payload(facilities):
     }
 
     return response
+
 
 def get_facilities(latitude, longitude):
     """Given the latitude and longitude, return facilities."""
@@ -55,7 +55,7 @@ def get_keph_levels():
         {
             'name': q['keph_level'],
             'id': i
-        } for i,q in enumerate(keph_level)]
+        } for i, q in enumerate(keph_level)]
     return qualified_keph_level
 
 
@@ -70,7 +70,7 @@ def get_facility_owner():
         {
             'name': q['owner_name'],
             'id': i
-        } for i,q in enumerate(facility_owner)]
+        } for i, q in enumerate(facility_owner)]
     return qualified_facility_owner
 
 
@@ -85,17 +85,16 @@ def get_facility_type():
         {
             'name': q['facility_type'],
             'id': i
-        } for i,q in enumerate(facility_owner)]
+        } for i, q in enumerate(facility_owner)]
     return qualified_facility_type
 
 
 def search_facility(
-    lat, lng, facility_type, keph_level, radius, facility_owner):
+        lat, lng, facility_type, keph_level, radius, facility_owner):
     """Search Faciities given search parameter."""
     point = Point(float(lng), float(lat))
     facilities = models.Facility.objects.filter(
-        latlong__distance_lt=(point,
-        Distance(km=radius)),
+        latlong__distance_lt=(point, Distance(km=radius)),
         facility_type=facility_type,
         keph_level=keph_level,
         owner_name=facility_owner).values(
