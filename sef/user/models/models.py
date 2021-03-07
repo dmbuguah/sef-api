@@ -8,7 +8,7 @@ from sef.common.models import AbstractBase
 
 class CustomUserManager(BaseUserManager):
     """
-    A custom user manager for nugget
+    A custom user manager for sef
     """
 
     def create_user(self, email=None, password=None, **extra_fields):

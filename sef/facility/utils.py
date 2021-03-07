@@ -19,7 +19,8 @@ class CreateSession:
             'username': self.username,
             'password': self.password
         }
-        urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
+        urllib3.disable_warnings(
+            urllib3.exceptions.InsecureRequestWarning)
         verify=True
 
         if not self.session and not self.session_response:
